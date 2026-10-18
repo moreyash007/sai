@@ -136,7 +136,7 @@ Lead stages: **New → Contacted → Qualified → Visit Scheduled → Visit Don
 
 1. **Login**: Sample 1 skyline animation with Sample 2 colours. Username + password. No self-signup.
 2. **Shell**: navy gradient sidebar with a gold active item and badge counts (open leads, overdue tasks). The top bar has global search, a notification bell, check-in status and the user menu. On mobile the sidebar becomes a drawer, with a bottom tab bar for field staff.
-3. **Dashboard**: role-aware.
+3. **Dashboard**: role-aware. Opens with a navy/gold hero (greeting, sun by day / moon and stars at night), a total-leads card and tappable stat tiles (New, Pending, Overdue, Callbacks, Qualified, Site visit scheduled/done, Bookings, Tasks) that open the matching filtered list. Same layout on phone and PC. Not yet built: Meeting and Expression-of-interest tiles (need new lead stages in the database).
    - Admin/Manager: 6 stat cards, pipeline, recent activity, live map, employee performance table, revenue chart, today's visits/follow-ups.
    - Sales/Telecaller: my follow-ups today, my overdue, my visits, my month's bookings + incentive earned.
 4. **Leads**: Kanban (drag = stage change + activity log) and a filterable List view. There's also a lead drawer with details, a timeline, notes, call/WhatsApp buttons, schedule visit, add follow-up, reassign and "Convert to booking". Includes bulk assign, CSV import with column mapping + duplicate check (phone), and export.
