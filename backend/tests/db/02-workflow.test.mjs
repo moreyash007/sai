@@ -211,7 +211,7 @@ console.log('\n# Dashboard & reports')
 {
   const d = await rpc(sales, `select dashboard_stats()`)
   ok(d.leads_total >= 1 && d.bookings_30d === 1 && Number(d.revenue_30d) === 9200000 && Number(d.my_incentive_paid) === 184000, 'sales dashboard: own leads, booking, revenue, incentive')
-  ok(Array.isArray(d.pipeline) && d.pipeline.length === 8, 'pipeline has all 8 stages')
+  ok(Array.isArray(d.pipeline) && d.pipeline.length === 11, 'pipeline has all 11 stages')
   const dt = await rpc(tc, `select dashboard_stats()`)
   ok(dt.revenue_30d === undefined && dt.bookings_30d === undefined, 'telecaller dashboard has no revenue figures')
   const dm = await rpc(mgr, `select dashboard_stats()`)

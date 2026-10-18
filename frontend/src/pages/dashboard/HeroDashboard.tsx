@@ -1,4 +1,4 @@
-import { AlarmClock, CalendarCheck, CheckCircle2, CheckSquare, Clock, Handshake, MapPin, Moon, Phone, Plus, Sun, ThumbsUp, type LucideIcon } from 'lucide-react'
+import { AlarmClock, CalendarCheck, CalendarClock, CheckCircle2, CheckSquare, Clock, Handshake, MapPin, Moon, Phone, Plus, Sparkles, Sun, ThumbsUp, Users, type LucideIcon } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 export interface HeroStats {
@@ -50,7 +50,10 @@ export function HeroDashboard({ s, name, canCheckIn }: { s: HeroStats; name: str
           { label: 'Callbacks', value: n('contacted'), to: '/leads?stage=contacted', icon: Phone, accent: '#C08A25' },
           { label: 'Qualified', value: n('qualified'), to: '/leads?stage=qualified', icon: ThumbsUp, accent: '#9C6E17' },
           { label: 'Site visit scheduled', value: n('visit_scheduled'), to: '/visits', icon: MapPin, accent: '#8B5CF6' },
+          { label: 'Meeting scheduled', value: n('meeting_scheduled'), to: '/leads?stage=meeting_scheduled', icon: CalendarClock, accent: '#0EA5E9' },
+          { label: 'Expression of interest', value: n('interested'), to: '/leads?stage=interested', icon: Sparkles, accent: '#E07A1F' },
           { label: 'Site visit done', value: n('visit_done'), to: '/leads?stage=visit_done', icon: CheckCircle2, accent: '#6D4AD8' },
+          { label: 'Meeting done', value: n('meeting_done'), to: '/leads?stage=meeting_done', icon: Users, accent: '#0284C7' },
         ]
       : []),
     ...(s.bookings_pending !== undefined ? [{ label: 'Bookings pending', value: s.bookings_pending, to: '/bookings', icon: Handshake, accent: '#0F7A44' }] : []),
