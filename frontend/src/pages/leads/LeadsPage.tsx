@@ -44,6 +44,7 @@ export function LeadsPage() {
   const [losing, setLosing] = useState<Lead | null>(null)
   const [exporting, setExporting] = useState(false)
   const dueOnly = params.get('due') === '1'
+  const stageFilter = params.get('stage')
   const openId = params.get('open')
 
   const setParam = (k: string, v: string | null) => {
@@ -64,9 +65,10 @@ export function LeadsPage() {
         (!needle || l.name.toLowerCase().includes(needle) || (projectName.get(l.project_id ?? '') ?? '').toLowerCase().includes(needle)) &&
         (!owner || l.owner_id === owner) &&
         (!source || l.source === source) &&
+        (!stageFilter || l.stage === stageFilter) &&
         (!dueOnly || (!['booked', 'lost'].includes(l.stage) && !!l.next_follow_up_at && new Date(l.next_follow_up_at).getTime() <= endOfToday)),
     )
-  }, [leads.data, q, owner, source, dueOnly, projectName])
+  }, [leads.data, q, owner, source, dueOnly, stageFilter, projectName])
 
   // 10 digits typed into search → exact phone lookup (phones are encrypted, so no partial match)
   const digits = q.replace(/\D/g, '')

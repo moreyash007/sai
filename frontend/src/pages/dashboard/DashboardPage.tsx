@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
-import { AlarmClock, BadgeIndianRupee, CalendarCheck, CheckSquare, Handshake, IndianRupee, MapPin, UserRound, Users } from 'lucide-react'
+import { MapPin, Users } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../auth/AuthProvider'
-import { Alert, Badge, Card, Loading, PageHeader, Stat } from '../../components/ui'
+import { Alert, Badge, Card, Loading, PageHeader } from '../../components/ui'
+import { HeroDashboard } from './HeroDashboard'
 import { rpc } from '../../lib/data'
-import { fmtDateTime, inr, isOverdue, stageOf, STAGES } from '../../lib/format'
+import { fmtDateTime, isOverdue, stageOf, STAGES } from '../../lib/format'
 
 interface Stats {
   leads_total?: number
@@ -33,41 +34,20 @@ export function DashboardPage() {
   const hour = new Date().getHours()
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
   const s = stats.data
-  const scopeNote = me?.scope === 'all' ? 'the whole company' : me?.scope === 'team' ? 'you and your team' : 'your own work'
   const pipeMax = Math.max(1, ...(s?.pipeline ?? []).map((p) => Number(p.count)))
 
   return (
     <>
-      <PageHeader
-        title={`${greeting}, ${me?.full_name.split(' ')[0]}!`}
-        sub={`${new Date().toLocaleDateString('en-IN', { weekday: 'long', day: '2-digit', month: 'short', year: 'numeric' })} · showing ${scopeNote}`}
-        actions={
-          can('attendance') && s && !s.checked_in ? (
-            <Link to="/attendance" className="inline-flex items-center gap-2 rounded-lg bg-gold px-4 py-2.5 text-sm font-semibold text-navy-dark hover:bg-gold-dark hover:text-white">
-              <CalendarCheck className="size-4" /> Check in
-            </Link>
-          ) : undefined
-        }
-      />
+      {s && <HeroDashboard s={s} name={me?.full_name.split(' ')[0] ?? ''} canCheckIn={can('attendance')} />}
+      <div className={s ? 'mt-4' : undefined}>
+      {!s && <PageHeader title={`${greeting}, ${me?.full_name.split(' ')[0]}!`} />}
       {stats.isLoading ? (
         <Loading />
       ) : stats.error || !s ? (
         <Alert>{(stats.error as Error)?.message ?? 'Could not load the dashboard.'}</Alert>
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 2xl:grid-cols-6">
-            {s.leads_total !== undefined && <Stat icon={UserRound} label="Open leads" value={s.leads_open} sub={`+${s.leads_new_7d} new this week`} />}
-            {s.followups_today !== undefined && (
-              <Stat icon={AlarmClock} label="Follow-ups today" value={s.followups_today} sub={s.followups_overdue ? `${s.followups_overdue} overdue` : 'none overdue'} tone={s.followups_overdue ? 'bad' : undefined} />
-            )}
-            {s.visits_upcoming !== undefined && <Stat icon={MapPin} label="Upcoming visits" value={s.visits_upcoming} sub={`${s.visits_done_30d} done in 30 days`} />}
-            {s.bookings_30d !== undefined && <Stat icon={Handshake} label="Bookings (30 days)" value={s.bookings_30d} sub={s.bookings_pending ? `${s.bookings_pending} awaiting approval` : 'none pending'} />}
-            {s.revenue_30d !== undefined && <Stat icon={IndianRupee} label="Sales (30 days)" value={inr(s.revenue_30d)} />}
-            {s.my_incentive_pending !== undefined && me?.scope === 'own' && <Stat icon={BadgeIndianRupee} label="My incentive due" value={inr(s.my_incentive_pending)} sub={`${inr(s.my_incentive_paid)} paid`} />}
-            <Stat icon={CheckSquare} label="My open tasks" value={s.tasks_open} sub={s.tasks_overdue ? `${s.tasks_overdue} overdue` : 'on track'} tone={s.tasks_overdue ? 'bad' : undefined} />
-          </div>
-
-          <div className="mt-4 grid gap-4 xl:grid-cols-3">
+          <div className="grid gap-4 xl:grid-cols-3">
             {s.pipeline && (
               <Card>
                 <div className="mb-3 flex items-center justify-between">
@@ -166,6 +146,7 @@ export function DashboardPage() {
           )}
         </>
       )}
+      </div>
     </>
   )
 }
