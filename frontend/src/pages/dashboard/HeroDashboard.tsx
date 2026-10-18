@@ -24,7 +24,7 @@ interface Tile {
   value: number | string
   to: string
   icon: LucideIcon
-  accent: string
+  accent: string // hex colour
 }
 
 export function HeroDashboard({ s, name, canCheckIn }: { s: HeroStats; name: string; canCheckIn: boolean }) {
@@ -44,51 +44,51 @@ export function HeroDashboard({ s, name, canCheckIn }: { s: HeroStats; name: str
   const tiles: Tile[] = [
     ...(hasLeads
       ? [
-          { label: 'New', value: n('new'), to: '/leads?stage=new', icon: Plus, accent: 'bg-violet-400' },
-          { label: 'Pending', value: s.followups_today ?? 0, to: '/leads?due=1', icon: Clock, accent: 'bg-white' },
-          { label: 'Overdue', value: s.followups_overdue ?? 0, to: '/leads?due=1', icon: AlarmClock, accent: 'bg-indigo-400' },
-          { label: 'Callbacks', value: n('contacted'), to: '/leads?stage=contacted', icon: Phone, accent: 'bg-emerald-400' },
-          { label: 'Qualified', value: n('qualified'), to: '/leads?stage=qualified', icon: ThumbsUp, accent: 'bg-amber-200' },
-          { label: 'Site visit scheduled', value: n('visit_scheduled'), to: '/visits', icon: MapPin, accent: 'bg-fuchsia-400' },
-          { label: 'Site visit done', value: n('visit_done'), to: '/leads?stage=visit_done', icon: CheckCircle2, accent: 'bg-pink-400' },
+          { label: 'New', value: n('new'), to: '/leads?stage=new', icon: Plus, accent: '#25C281' },
+          { label: 'Pending', value: s.followups_today ?? 0, to: '/leads?due=1', icon: Clock, accent: '#C08A25' },
+          { label: 'Overdue', value: s.followups_overdue ?? 0, to: '/leads?due=1', icon: AlarmClock, accent: '#D64545' },
+          { label: 'Callbacks', value: n('contacted'), to: '/leads?stage=contacted', icon: Phone, accent: '#C08A25' },
+          { label: 'Qualified', value: n('qualified'), to: '/leads?stage=qualified', icon: ThumbsUp, accent: '#9C6E17' },
+          { label: 'Site visit scheduled', value: n('visit_scheduled'), to: '/visits', icon: MapPin, accent: '#8B5CF6' },
+          { label: 'Site visit done', value: n('visit_done'), to: '/leads?stage=visit_done', icon: CheckCircle2, accent: '#6D4AD8' },
         ]
       : []),
-    ...(s.bookings_pending !== undefined ? [{ label: 'Bookings pending', value: s.bookings_pending, to: '/bookings', icon: Handshake, accent: 'bg-sky-300' }] : []),
-    { label: 'My open tasks', value: s.tasks_open, to: '/tasks', icon: CheckSquare, accent: 'bg-blue-500' },
+    ...(s.bookings_pending !== undefined ? [{ label: 'Bookings pending', value: s.bookings_pending, to: '/bookings', icon: Handshake, accent: '#0F7A44' }] : []),
+    { label: 'My open tasks', value: s.tasks_open, to: '/tasks', icon: CheckSquare, accent: '#0B1F3A' },
   ]
 
   return (
-    <div className="-mx-4 -mt-5 min-h-[calc(100dvh-3.75rem)] overflow-hidden bg-gradient-to-b from-indigo-700 via-[#14143a] to-[#0a0a14] text-white sm:-mx-6 lg:mx-0 lg:mt-0 lg:min-h-0 lg:rounded-2xl">
-      <div className="relative px-5 pt-10 pb-14 lg:px-8 lg:pt-8 lg:pb-10">
+    <div className="overflow-hidden rounded-2xl border border-line bg-panel">
+      <div className="relative bg-gradient-to-br from-navy-dark via-navy to-navy-soft px-5 pt-8 pb-10 text-white lg:px-8">
         <svg className="pointer-events-none absolute inset-0 size-full" aria-hidden="true">
           {night &&
-            STARS.map(([x, y, r], i) => <circle key={i} cx={`${x}%`} cy={`${y}%`} r={r} className="animate-pulse fill-white/80" />)}
+            STARS.map(([x, y, r], i) => <circle key={i} cx={`${x}%`} cy={`${y}%`} r={r} className="animate-pulse fill-gold-light/80" />)}
         </svg>
-        {night ? <Moon className="absolute top-8 right-6 size-14 fill-sky-300 text-sky-300" /> : <Sun className="absolute top-8 right-6 size-14 fill-amber-300 text-amber-300" />}
+        {night ? <Moon className="absolute top-8 right-6 size-14 fill-gold-light text-gold-light" /> : <Sun className="absolute top-8 right-6 size-14 fill-gold-light text-gold" />}
         <p className="relative text-2xl leading-tight font-bold">Hi {name}!</p>
         <p className="relative text-2xl leading-tight font-bold">{greeting}</p>
         {canCheckIn && !s.checked_in && (
-          <Link to="/attendance" className="relative mt-4 inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-sm font-semibold backdrop-blur">
+          <Link to="/attendance" className="relative mt-4 inline-flex items-center gap-2 rounded-full bg-gold px-4 py-2 text-sm font-semibold text-navy-dark hover:bg-gold-light">
             <CalendarCheck className="size-4" /> Check in
           </Link>
         )}
       </div>
 
-      <div className="space-y-3 px-4 pb-6 lg:px-8">
+      <div className="space-y-3 bg-canvas p-4 lg:p-6">
         {hasLeads && (
-          <Link to="/leads" className="block rounded-2xl border border-indigo-400/40 bg-white/5 p-4 backdrop-blur">
-            <div className="flex items-start justify-between border-b border-white/15 pb-3">
+          <Link to="/leads" className="block rounded-xl border border-line bg-panel p-4 hover:border-gold">
+            <div className="flex items-start justify-between border-b border-line pb-3">
               <div>
-                <p className="text-[11px] text-white/50">statistics</p>
-                <p className="text-lg font-bold">total leads</p>
+                <p className="text-[11px] text-ink-faint">statistics</p>
+                <p className="text-lg font-bold text-navy">total leads</p>
               </div>
-              <p className="text-xl font-bold">{s.leads_total}</p>
+              <p className="text-xl font-bold text-gold-dark">{s.leads_total}</p>
             </div>
             <div className="mt-3 grid grid-cols-4 gap-1 text-center">
               {summary.map((x) => (
                 <div key={x.label}>
-                  <p className="text-[11px] text-white/60">{x.label}</p>
-                  <p className="text-lg font-bold">{x.value}</p>
+                  <p className="text-[11px] text-ink-dim">{x.label}</p>
+                  <p className="text-lg font-bold text-navy">{x.value}</p>
                 </div>
               ))}
             </div>
@@ -97,13 +97,13 @@ export function HeroDashboard({ s, name, canCheckIn }: { s: HeroStats; name: str
 
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
           {tiles.map(({ label, value, to, icon: Icon, accent }) => (
-            <Link key={label} to={to} className="relative flex items-center justify-between overflow-hidden rounded-2xl border border-indigo-400/30 bg-white/5 py-4 pr-3 pl-5 backdrop-blur">
-              <span className={`absolute inset-y-3 left-0 w-1.5 rounded-r-full ${accent}`} />
+            <Link key={label} to={to} className="relative flex items-center justify-between overflow-hidden rounded-xl border border-line bg-panel py-4 pr-3 pl-5 hover:border-gold">
+              <span className="absolute inset-y-3 left-0 w-1.5 rounded-r-full" style={{ background: accent }} />
               <span className="min-w-0">
-                <span className="block truncate text-xs text-white/60">{label}</span>
-                <span className="block text-xl font-bold">{value}</span>
+                <span className="block truncate text-xs text-ink-dim">{label}</span>
+                <span className="block text-xl font-bold text-navy">{value}</span>
               </span>
-              <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-white/10">
+              <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-gold-tint text-gold-dark">
                 <Icon className="size-5" />
               </span>
             </Link>
