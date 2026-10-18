@@ -224,6 +224,27 @@ tbody tr.click:hover td { background: #fcfaf5; }
   .roles { grid-template-columns: minmax(0, 1fr); }
   .toast { bottom: calc(env(safe-area-inset-bottom, 0px) + 84px); max-width: calc(100% - 32px); }
 }
+
+.hero { border-radius: 16px; overflow: hidden; color: #fff; background: linear-gradient(180deg, #4338ca 0%, #14143a 45%, #0a0a14 100%); }
+.hero-top { position: relative; padding: 28px 24px 34px; }
+.hero-top h2 { margin: 0; font-size: 24px; line-height: 1.25; }
+.hero-top .orb { position: absolute; top: 22px; right: 24px; width: 56px; height: 56px; }
+.hero-top .star { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: #fff; opacity: .8; animation: hero-tw 3s ease-in-out infinite; }
+@keyframes hero-tw { 50% { opacity: .15; } }
+.hero-body { padding: 0 16px 18px; display: grid; gap: 12px; }
+.hero-card, .hero-tile { position: relative; border: 1px solid rgba(129, 140, 248, .35); background: rgba(255, 255, 255, .06); border-radius: 16px; color: #fff; text-align: left; font: inherit; cursor: pointer; }
+.hero-card { padding: 16px; }
+.hero-card .row1 { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 12px; border-bottom: 1px solid rgba(255, 255, 255, .15); }
+.hero-card .row2 { display: grid; grid-template-columns: repeat(4, 1fr); text-align: center; margin-top: 12px; gap: 4px; }
+.hero small { display: block; font-size: 11.5px; color: rgba(255, 255, 255, .6); }
+.hero b { font-size: 20px; }
+.hero-tiles { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.hero-tile { display: flex; justify-content: space-between; align-items: center; padding: 14px 12px 14px 20px; overflow: hidden; }
+.hero-tile::before { content: ''; position: absolute; left: 0; top: 12px; bottom: 12px; width: 5px; border-radius: 0 4px 4px 0; background: var(--ac); }
+.hero-tile .ico { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 10px; background: rgba(255, 255, 255, .1); flex-shrink: 0; }
+.hero-tile .ico svg { width: 18px; height: 18px; }
+@media (max-width: 1100px) { .hero-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 700px) { .hero-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 </style>
 
 <div class="ribbon" role="note">Demo with sample data. Nothing you do here is saved or sent anywhere.</div>
@@ -474,6 +495,29 @@ const scopeHint = () => R().scope === 'all' ? '' : `<div class="scopehint">${ic(
 const stagePill = (k) => { const s = stage(k); return `<span class="pill" style="background:${s.color}1f;color:${s.key === 'negotiation' ? 'var(--navy)' : s.color}"><span class="dot" style="background:${s.color}"></span>${s.label}</span>`; };
 
 /* ---------------- pages ---------------- */
+function hero(L, dueToday, bk) {
+  const h = new Date().getHours(), night = h >= 19 || h < 5;
+  const greet = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+  const n = (k) => L.filter((l) => l.stage === k).length;
+  const overdue = L.filter((l) => !['booked', 'lost'].includes(l.stage) && new Date(l.follow).getTime() < today).length;
+  const tiles = [
+    ['New', n('new'), 'new', 'plus', '#a78bfa'], ['Pending', dueToday.length, 'due', 'attendance', '#ffffff'], ['Overdue', overdue, 'due', 'bell', '#818cf8'],
+    ['Callbacks', n('contacted'), 'contacted', 'phone', '#34d399'], ['Qualified', n('qualified'), 'qualified', 'check', '#fde68a'],
+    ['Site visit scheduled', n('visit_scheduled'), 'visit_scheduled', 'visits', '#e879f9'], ['Site visit done', n('visit_done'), 'visit_done', 'check', '#f472b6'],
+    ['Bookings', bk.length, '', 'bookings', '#7dd3fc'], ['My open tasks', TASKS.filter((k) => !k.done).length, '', 'tasks', '#3b82f6'],
+  ];
+  const stars = night ? [[8, 18], [24, 12], [47, 40], [62, 14], [78, 52], [90, 28], [35, 62]].map(([x, y]) => `<i class="star" style="left:${x}%;top:${y}%"></i>`).join('') : '';
+  const orb = night ? '<svg class="orb" viewBox="0 0 24 24" fill="#7dd3fc"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>' : '<svg class="orb" viewBox="0 0 24 24" fill="none" stroke="#fcd34d" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4" fill="#fcd34d"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+  return `<section class="hero" aria-label="Dashboard summary">
+    <div class="hero-top">${stars}${orb}<h2>Hi ${esc(me().name.split(' ')[0])}!<br>${greet}</h2></div>
+    <div class="hero-body">
+      <button class="hero-card" data-go="leads"><div class="row1"><div><small>statistics</small><b>total leads</b></div><b class="num">${L.length}</b></div>
+        <div class="row2"><div><small>active</small><b class="num">${L.filter((l) => !['booked', 'lost'].includes(l.stage)).length}</b></div><div><small>booked</small><b class="num">${n('booked')}</b></div><div><small>negotiation</small><b class="num">${n('negotiation')}</b></div><div><small>lost</small><b class="num">${n('lost')}</b></div></div></button>
+      <div class="hero-tiles">${tiles.map(([label, v, stg, icon, ac]) => `<button class="hero-tile" style="--ac:${ac}" ${stg ? `data-hstage="${stg}"` : `data-go="${icon === 'tasks' ? 'tasks' : 'bookings'}"`}><span><small>${label}</small><b class="num">${v}</b></span><span class="ico">${ic(icon)}</span></button>`).join('')}</div>
+    </div>
+  </section>`;
+}
+
 function dashboard() {
   const L = visibleLeads();
   const open = L.filter((l) => !['booked', 'lost'].includes(l.stage)).length;
@@ -488,12 +532,8 @@ function dashboard() {
   const vis = VISITS.filter((v) => v.status === 'scheduled' && (R().scope !== 'own' || v.exec === R().user));
   return shell(`
     ${scopeHint()}
-    <div class="kpis">
-      <div class="panel kpi"><small>Open leads</small><b class="num">${open}</b><em>+4 this week</em></div>
-      <div class="panel kpi"><small>Follow-ups due today</small><b class="num">${dueToday.length}</b><em class="${dueToday.length ? 'down' : ''}">${dueToday.length ? 'Call before 7 pm' : 'All clear'}</em></div>
-      <div class="panel kpi"><small>Bookings (all time)</small><b class="num">${R().scope === 'own' ? bk.length : BOOKINGS.length}</b><em>${booked} from current leads</em></div>
-      <div class="panel kpi"><small>Booking value</small><b class="num">${inr(rev)}</b><em>+₹1.12 Cr this month</em></div>
-    </div>
+    ${hero(L, dueToday, bk, rev)}
+    <div style="height:14px"></div>
     <div class="grid2">
       <section class="panel"><header><h3>Sales pipeline</h3><span class="faint">${L.length} leads</span></header><div class="body" style="display:grid;gap:10px">
         ${counts.map(([s, n]) => `<div style="display:grid;grid-template-columns:120px minmax(0,1fr) 28px;gap:10px;align-items:center;font-size:12.5px"><span>${s.label}</span><div class="bar"><i style="width:${(n / max) * 100}%;background:${s.color}"></i></div><b class="num" style="text-align:right">${n}</b></div>`).join('')}
@@ -739,6 +779,7 @@ app.addEventListener('click', (e) => {
   const ds = t.dataset;
   if (ds.close) { S.open = null; S.modal = null; render(); return; }
   if (ds.role) { S.loginRole = ds.role; render(); return; }
+  if (ds.hstage) { S.stageF = ds.hstage === 'due' ? '' : ds.hstage; return go('leads'); }
   if (ds.go) return go(ds.go);
   if (ds.lv) { S.leadView = ds.lv; render(); return; }
   if (ds.proj) { S.project = ds.proj; S.tower = PROJECTS.find((p) => p.id === ds.proj).towers[0]; render(); return; }
